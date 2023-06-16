@@ -1,0 +1,58 @@
+AlignAfterOpenBracket: AlwaysBreak
+AlignConsecutiveAssignments: Consecutive
+AlignConsecutiveDeclarations: Consecutive
+AlignConsecutiveMacros: Consecutive
+AlignTrailingComments: true
+
+AllowAllParametersOfDeclarationOnNextLine: false
+
+AllowShortBlocksOnASingleLine: Empty
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: None
+AllowShortLoopsOnASingleLine: true
+AllowShortIfStatementsOnASingleLine: Never
+
+BinPackParameters: false
+BinPackArguments: false
+
+BreakBeforeBraces: Linux
+
+ColumnLimit: 120
+
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex:           '^".*\.hpp"$'
+    Priority:        1
+  - Regex:           '^<.*\.h(pp)?>$'
+    Priority:        3
+  - Regex:           '^<.*>$'
+    Priority:        2
+
+IndentCaseBlocks: true
+IndentCaseLabels: true
+IndentWidth: 4
+
+KeepEmptyLinesAtTheStartOfBlocks: false
+MaxEmptyLinesToKeep: 1
+
+PackConstructorInitializers: Never
+
+PointerAlignment: Right
+QualifierAlignment: Left
+
+SeparateDefinitionBlocks: Always
+
+SpaceAfterCStyleCast: false
+SpaceAfterLogicalNot: false
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeCaseColon: false
+SpaceBeforeSquareBrackets: false
+SpaceInEmptyBlock: false
+SpaceInEmptyParentheses: false
+SpacesInCStyleCastParentheses: false
+SpacesInConditionalStatement: false
+SpacesInLineCommentPrefix:
+  Minimum: 1
+  Maximum: 1
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
