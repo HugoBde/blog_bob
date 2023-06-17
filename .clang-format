@@ -7,7 +7,7 @@ AlignTrailingComments: true
 AllowAllParametersOfDeclarationOnNextLine: false
 
 AllowShortBlocksOnASingleLine: Empty
-AllowShortCaseLabelsOnASingleLine: true
+AllowShortCaseLabelsOnASingleLine: false
 AllowShortFunctionsOnASingleLine: None
 AllowShortLoopsOnASingleLine: true
 AllowShortIfStatementsOnASingleLine: Never
@@ -15,7 +15,7 @@ AllowShortIfStatementsOnASingleLine: Never
 BinPackParameters: false
 BinPackArguments: false
 
-BreakBeforeBraces: Linux
+BreakBeforeBraces: Allman
 
 ColumnLimit: 120
 
