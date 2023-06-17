@@ -13,6 +13,8 @@ class ConfigManager
     {
         std::string monitor_dir;
         std::string output_dir;
+        std::string header;
+        std::string footer;
     };
 
     static Config config;
@@ -21,7 +23,6 @@ class ConfigManager
     prog_opts::options_description display_options;
     prog_opts::variables_map       variables_map;
 
-
   public:
     ConfigManager();
 
@@ -29,4 +30,8 @@ class ConfigManager
 
     const std::string &get_monitor_dir() const;
     const std::string &get_output_dir() const;
+    const std::string &get_header() const;
+    const std::string &get_footer() const;
+
+    void print_usage() const;
 };

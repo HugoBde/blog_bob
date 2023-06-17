@@ -1,9 +1,12 @@
 #include "config.hpp"
 
 #include <cstdlib>
+#include <fstream>
 #include <iostream>
+#include <sstream>
 
 #include <boost/program_options/options_description.hpp>
+#include <boost/program_options/variables_map.hpp>
 
 // Initialise static config member
 ConfigManager::Config ConfigManager::config;
@@ -51,23 +54,66 @@ void ConfigManager::init(int argc, char *argv[])
 
     if (variables_map.count("help"))
     {
-        std::cout << display_options << '\n';
+        print_usage();
         exit(0);
     }
+
+    // Store config in internal struct
+
+    // Monitor Directory
+    config.monitor_dir = variables_map["monitor"].as<std::string>();
+
+    // Output Directory
+    config.output_dir = variables_map["output"].as<std::string>();
+
+    // Header and Footer file
+    std::ifstream file;
+
+    // Header
+    std::stringstream header_file_content;
+    file.open(variables_map["header"].as<std::string>());
+    if (!file.is_open())
+    {
+        // throw an excpetion header
+    }
+    header_file_content << file.rdbuf();
+    config.header = header_file_content.str();
+    file.close();
+
+    // Footer
+    std::stringstream footer_file_content;
+    file.open(variables_map["footer"].as<std::string>());
+    if (!file.is_open())
+    {
+        // throw an excpetion footer
+    }
+    footer_file_content << file.rdbuf();
+    config.footer = footer_file_content.str();
+    file.close();
 }
 
 const std::string &ConfigManager::get_monitor_dir() const
 {
-    return variables_map["monitor"].as<std::string>();
+    return config.monitor_dir;
 }
 
 const std::string &ConfigManager::get_output_dir() const
 {
-    return variables_map["output"].as<std::string>();
+    return config.output_dir;
 }
 
-void print_usage(const prog_opts::options_description &opts_desc)
+const std::string &ConfigManager::get_header() const
+{
+    return config.header;
+}
+
+const std::string &ConfigManager::get_footer() const
+{
+    return config.footer;
+}
+
+void ConfigManager::print_usage() const
 {
     std::cerr << "Usage: blog_bob [OPTIONS]\n";
-    std::cerr << opts_desc << '\n';
+    std::cerr << display_options << '\n';
 }

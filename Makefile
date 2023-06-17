@@ -1,5 +1,5 @@
 CC = clang++
-LIBS = -lboost_program_options
+LIBS = -lboost_program_options -lcmark-gfm
 FLAGS = -g -std=c++17
 
 BUILD_DIR = build
@@ -16,6 +16,7 @@ $(BIN): $(OBJS) | $(BUILD_DIR)
 	$(CC) -o $@ $^ $(FLAGS) $(LIBS)
 
 $(OBJ_DIR)/%.o: src/%.cpp | $(OBJ_DIR)
+	clang-format -i $<
 	$(CC) -o $@ -c $< $(FLAGS)
 
 $(BUILD_DIR) $(OBJ_DIR):
