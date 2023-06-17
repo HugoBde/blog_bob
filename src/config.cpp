@@ -5,6 +5,9 @@
 
 #include <boost/program_options/options_description.hpp>
 
+// Initialise static config member
+ConfigManager::Config ConfigManager::config;
+
 ConfigManager::ConfigManager()
     : internal_options("Internal Options"),
       display_options("Options")
@@ -46,10 +49,21 @@ void ConfigManager::init(int argc, char *argv[])
 {
     prog_opts::store(prog_opts::parse_command_line(argc, argv, internal_options), variables_map);
 
-    if (variables_map.count("help")) {
+    if (variables_map.count("help"))
+    {
         std::cout << display_options << '\n';
         exit(0);
     }
+}
+
+const std::string &ConfigManager::get_monitor_dir() const
+{
+    return variables_map["monitor"].as<std::string>();
+}
+
+const std::string &ConfigManager::get_output_dir() const
+{
+    return variables_map["output"].as<std::string>();
 }
 
 void print_usage(const prog_opts::options_description &opts_desc)

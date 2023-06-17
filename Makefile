@@ -1,6 +1,6 @@
 CC = clang++
 LIBS = -lboost_program_options
-FLAGS = 
+FLAGS = -g -std=c++17
 
 BUILD_DIR = build
 OBJ_DIR   = $(BUILD_DIR)/obj

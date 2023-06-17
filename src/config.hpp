@@ -9,7 +9,7 @@ namespace prog_opts = boost::program_options;
 class ConfigManager
 {
   private:
-    class Config
+    struct Config
     {
         std::string monitor_dir;
         std::string output_dir;
@@ -21,13 +21,12 @@ class ConfigManager
     prog_opts::options_description display_options;
     prog_opts::variables_map       variables_map;
 
-    static Config &get_config();
 
   public:
     ConfigManager();
 
     void init(int argc, char *argv[]);
 
-    const std::string &get_monitor_dir();
-    const std::string &get_output_dir();
+    const std::string &get_monitor_dir() const;
+    const std::string &get_output_dir() const;
 };

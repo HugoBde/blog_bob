@@ -14,5 +14,7 @@ int main(int argc, char *argv[])
 
     Bob builder(config_manager);
 
+    builder.run();
+
     return 0;
 }

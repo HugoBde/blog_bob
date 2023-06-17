@@ -3,6 +3,8 @@
     "arguments": [
       "/usr/bin/clang++",
       "-c",
+      "-g",
+      "-std=c++17",
       "-o",
       "build/obj/main.o",
       "src/main.cpp"
@@ -15,6 +17,8 @@
     "arguments": [
       "/usr/bin/clang++",
       "-c",
+      "-g",
+      "-std=c++17",
       "-o",
       "build/obj/bob.o",
       "src/bob.cpp"
@@ -27,6 +31,8 @@
     "arguments": [
       "/usr/bin/clang++",
       "-c",
+      "-g",
+      "-std=c++17",
       "-o",
       "build/obj/config.o",
       "src/config.cpp"
