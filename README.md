@@ -7,3 +7,7 @@
 I am a huge fan of Bob the Builder, and attribute my "can-do" attitude and love for tinkering and building things to him. Since `blog_bob` helps me **build** my blog, I wanted to dedicate this project to Bob the Builder as a thank you for the positive impact he has had on my life.
 
 ![Bob the Builder](https://upload.wikimedia.org/wikipedia/en/thumb/c/c5/Bob_the_builder.jpg/220px-Bob_the_builder.jpg)
+
+## Build Dependencies
+- Boost Lib
+- libcmark-gfm
