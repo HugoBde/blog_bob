@@ -1,3 +1,7 @@
+![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/HugoBde/blog_bob/build-test.yml)
+
+---
+
 # BLOG_BOB
 
 ## What is blog_bob
