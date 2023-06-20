@@ -1,5 +1,5 @@
 CC = clang++
-LIBS = -lboost_program_options -lcmark-gfm
+LIBS = -lboost_program_options -lcmark-gfm -lpqxx
 FLAGS = -g -std=c++17
 
 BUILD_DIR = build

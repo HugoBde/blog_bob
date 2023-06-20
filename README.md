@@ -9,5 +9,11 @@ I am a huge fan of Bob the Builder, and attribute my "can-do" attitude and love 
 ![Bob the Builder](https://upload.wikimedia.org/wikipedia/en/thumb/c/c5/Bob_the_builder.jpg/220px-Bob_the_builder.jpg)
 
 ## Build Dependencies
-- Boost Lib
+- libboost
 - libcmark-gfm
+- libpqxx
+
+## Todo
+- [ ] update database if monitored folder content has changed on startup
+- [ ] queue request to database if not available
+- [ ] loggging to specified file
