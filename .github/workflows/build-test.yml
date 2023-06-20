@@ -1,0 +1,22 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+# I don't want to figure out how to make configure install libraries for me
+#     - name: configure
+#       run: ./configure
+    - name: configure
+      run: sudo apt-get install -y libpqxx-dev libboost-program-options1.74-dev libcmark-gfm-dev
+    - name: make
+      run: make
