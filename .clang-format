@@ -23,9 +23,9 @@ IncludeBlocks: Regroup
 IncludeCategories:
   - Regex:           '^".*\.hpp"$'
     Priority:        1
-  - Regex:           '^<sys\/.*.h(pp)?>$'
+  - Regex:           '^<sys\/.*.h(pp|xx)?>$'
     Priority:        2
-  - Regex:           '^<.*\.h(pp)?>$'
+  - Regex:           '^<.*\.h(pp|xx)?>$'
     Priority:        3
   - Regex:           '^<.*>$'
     Priority:        2
