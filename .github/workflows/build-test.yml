@@ -19,4 +19,4 @@ jobs:
     - name: configure
       run: sudo apt-get install -y libpqxx-dev libboost-program-options1.74-dev libcmark-gfm-dev
     - name: make
-      run: make
+      run: make -j
