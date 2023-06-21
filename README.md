@@ -21,3 +21,6 @@ I am a huge fan of Bob the Builder, and attribute my "can-do" attitude and love 
 - [ ] update database if monitored folder content has changed on startup
 - [ ] queue request to database if not available
 - [ ] loggging to specified file
+
+## Lessons learnt
+Rust is so much better, I miss Result and Option
