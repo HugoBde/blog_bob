@@ -58,3 +58,6 @@ SpacesInLineCommentPrefix:
   Maximum: 1
 SpacesInParentheses: false
 SpacesInSquareBrackets: false
+
+PointerAlignment: Middle
+ReferenceAlignment: Middle
