@@ -1,20 +1,26 @@
 #include "bob.hpp"
 #include "config.hpp"
 
+#include <exception>
 #include <fstream>
 #include <iostream>
 
 #include <boost/program_options.hpp>
 #include <cmark-gfm.h>
 
-int main(int argc, char *argv[])
+int main(int argc, char * argv[])
 {
-    ConfigManager config_manager;
-    config_manager.init(argc, argv);
+    try
+    {
+        Config config(argc, argv);
+        Bob    bob = Bob::create(config);
 
-    Bob builder(config_manager);
-
-    builder.run();
+        bob.run();
+    }
+    catch (const std::exception & e)
+    {
+        std::cout << e.what() << std::endl;
+    }
 
     return 0;
 }

@@ -3,27 +3,61 @@
 #include "config.hpp"
 
 #include <cstddef>
+#include <cstdint>
 #include <exception>
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 #include <sys/inotify.h>
 
 #include <cmark-gfm.h>
+#include <pqxx/connection.hxx>
 #include <pqxx/transaction.hxx>
 
-Bob::Bob(const ConfigManager &config_manager)
-    : config_manager(config_manager),
-      db_conn("/* connection string */")
+Bob Bob::create(const Config & config)
 {
-    monitor_dir = config_manager.get_monitor_dir();
-    output_dir  = config_manager.get_output_dir();
-    header      = config_manager.get_header();
-    footer      = config_manager.get_footer();
+    // Build database connection string
+    std::string db_conn_string = "host=" + config.get<std::string>("database.host") +
+                                 " port=" + std::to_string(config.get<std::uint16_t>("database.port")) +
+                                 " dbname=" + config.get<std::string>("database.database") +
+                                 " user=" + config.get<std::string>("database.user") +
+                                 " password=" + config.get<std::string>("database.password");
 
-    // Validate database after resuming
-} // Bob::Bob
+    return Bob(config, db_conn_string);
+}
+
+Bob::Bob(const Config & config, const std::string & db_conn_string)
+    : db_conn(db_conn_string)
+{
+    monitor_dir = config.get<std::string>("general.monitored_dir");
+    output_dir  = config.get<std::string>("general.output_dir");
+
+    db_table = config.get<std::string>("database.table");
+
+    // Read header file
+    std::string       header_file_name = config.get<std::string>("general.header_file");
+    std::ifstream     header_file(header_file_name);
+    std::stringstream header_ss;
+
+    if (!header_file.is_open())
+        throw std::runtime_error("Failed to open header file: " + header_file_name);
+
+    header_ss << header_file.rdbuf();
+    header = header_ss.str();
+
+    // Read footer file
+    std::string       footer_file_name = config.get<std::string>("general.footer_file");
+    std::ifstream     footer_file(footer_file_name);
+    std::stringstream footer_ss;
+
+    if (!footer_file.is_open())
+        throw std::runtime_error("Failed to open footer file: " + footer_file_name);
+
+    footer_ss << footer_file.rdbuf();
+    footer = footer_ss.str();
+}
 
 void Bob::run()
 {
@@ -51,9 +85,9 @@ void Bob::run()
             return;
         }
 
-        inotify_event *event;
+        inotify_event * event;
 
-        for (uint8_t *ptr = buffer; ptr - buffer < read_count; ptr += sizeof(inotify_event) + event->len)
+        for (uint8_t * ptr = buffer; ptr - buffer < read_count; ptr += sizeof(inotify_event) + event->len)
         {
             event = (inotify_event *)ptr;
 
@@ -70,77 +104,74 @@ void Bob::run()
     }
 
     close(inotify_instance);
-} // Bob::run
+}
 
-void Bob::article_update(inotify_event *event)
+void Bob::article_update(inotify_event * event)
 {
+    // Read modified file
+    std::filesystem::path input_file_path(event->name);
+
+    if (input_file_path.extension() != ".md")
+        return;
+
+    std::ifstream input_file(monitor_dir / input_file_path);
+
+    std::string blog_title;
+
     try
     {
-        // Read modified file
-        std::filesystem::path input_file_path(event->name);
-        std::ifstream         input_file(monitor_dir / input_file_path);
-
-        std::string blog_title = get_md_article_title(input_file);
-
-        std::stringstream md_content;
-        md_content << input_file.rdbuf();
-
-        // Convert Markdown to HTML
-        char *html_content =
-            cmark_markdown_to_html(md_content.str().c_str(), md_content.str().size(), CMARK_OPT_DEFAULT);
-
-        // Create output file
-        std::filesystem::path output_file_path(input_file_path);
-        output_file_path.replace_extension("html");
-        std::ofstream output_file(output_dir / output_file_path);
-
-        // Write to output file
-        output_file << header;
-        output_file << html_content;
-        output_file << footer;
-
-        // Free heap allocated HTML content
-        free(html_content);
-
-        // Update database
-        pqxx::work db_transaction(db_conn);
-
-        pqxx::result res = db_transaction.exec("SELECT * FROM /* table name */ WHERE title='" + blog_title + "';");
-
-        // If row exist, update it, otherwise create a new entry
-        if (res.size() == 1)
-        {
-            db_transaction.exec("UPDATE /* table name */ SET update_date=CURRENT_DATE WHERE title='" + blog_title + "';");
-            db_transaction.commit();
-            std::cout << "Updated: " << blog_title << '\n';
-        }
-        else
-        {
-            db_transaction.exec("INSERT INTO /* table name */ VALUES ('" + blog_title + "', CURRENT_DATE);");
-            db_transaction.commit();
-            std::cout << "Created: " << blog_title << " for " << event->name << '\n';
-        }
+        blog_title = get_md_article_title(input_file);
     }
-    catch (BobException e)
+    catch (const std::exception & e)
     {
-        switch (e)
-        {
-            case BobException::ARTICLE_MISSING_TITLE:
-                std::cout << "File " << event->name << " is missing a title\n";
-                break;
-        }
+        std::cout << input_file_path << ": " << e.what() << std::endl;
+        return;
     }
-    catch (const std::exception &e)
+
+    std::stringstream md_content;
+    md_content << input_file.rdbuf();
+
+    // Convert Markdown to HTML
+    char * html_content = cmark_markdown_to_html(md_content.str().c_str(), md_content.str().size(), CMARK_OPT_DEFAULT);
+
+    // Create output file
+    std::filesystem::path output_file_path(input_file_path);
+    output_file_path.replace_extension("html");
+    std::ofstream output_file(output_dir / output_file_path);
+
+    // Write to output file
+    output_file << header;
+    output_file << html_content;
+    output_file << footer;
+
+    // Free heap allocated HTML content
+    free(html_content);
+
+    // Update database
+    pqxx::work db_transaction(db_conn);
+
+    pqxx::result res = db_transaction.exec("SELECT * FROM " + db_table + " WHERE title='" + blog_title + "';");
+
+    // If row exist, update it, otherwise create a new entry
+    if (res.size() == 1)
     {
-        std::cerr << e.what() << '\n';
+        db_transaction.exec("UPDATE " + db_table + " SET update_date=CURRENT_DATE WHERE title='" + blog_title + "';");
+        db_transaction.commit();
+        std::cout << "Updated: \"" << blog_title << "\"\n";
+    }
+    else
+    {
+        db_transaction.exec("INSERT INTO " + db_table + " VALUES ('" + blog_title + "', CURRENT_DATE);");
+        db_transaction.commit();
+        std::cout << "Created: \"" << blog_title << "\" for \"" << event->name << "\"\n";
     }
 }
 
-void Bob::article_delete(inotify_event *event)
+void Bob::article_delete(inotify_event * event)
 {
 }
 
-std::string Bob::get_md_article_title(std::ifstream &md_article)
+std::string Bob::get_md_article_title(std::ifstream & md_article)
 {
     // Just in case
     md_article.seekg(0);
@@ -157,5 +188,5 @@ std::string Bob::get_md_article_title(std::ifstream &md_article)
         return first_line.substr(2);
     }
 
-    throw BobException::ARTICLE_MISSING_TITLE;
+    throw std::runtime_error("missing title");
 }
