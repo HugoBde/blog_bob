@@ -8,17 +8,19 @@ use serde::Deserialize;
 use time::Date;
 
 pub struct Bob {
-    inotify:     Inotify,
+    inotify: Inotify,
     monitor_dir: PathBuf,
-    output_dir:  PathBuf,
+    output_dir: PathBuf,
 }
 
 impl Bob {
     pub fn new(monitor_dir: &str, output_dir: &str) -> Bob {
-
         let inotify = Inotify::init().unwrap();
 
-        inotify.watches().add(monitor_dir, WatchMask::ALL_EVENTS | WatchMask::ONLYDIR).unwrap();
+        inotify
+            .watches()
+            .add(monitor_dir, WatchMask::ALL_EVENTS | WatchMask::ONLYDIR)
+            .unwrap();
 
         Bob {
             inotify,
@@ -28,15 +30,12 @@ impl Bob {
     }
 
     pub fn run(&mut self) {
-
         let mut buffer = [0; 1024];
 
         loop {
-
             let events = self.inotify.read_events_blocking(&mut buffer).unwrap();
 
             for event in events {
-
                 println!("{:?}", event);
 
                 match event.mask {
@@ -48,7 +47,6 @@ impl Bob {
     }
 
     fn update_article(&self, event: Event<&OsStr>) {
-
         let mut file_name = PathBuf::from(&self.monitor_dir);
 
         file_name.push(event.name.unwrap());
@@ -60,14 +58,12 @@ impl Bob {
         let parts: Vec<&str> = file_content.splitn(3, "---").collect();
 
         if parts.len() != 3 {
-
             eprintln!("frontmatter missing in {}", file_name.display());
+            return;
         }
 
         // parse yaml
         let article_metadata: ArticleMetadata = serde_yaml::from_str(parts[1]).unwrap();
-
-        println!("METADATA:\n{:#?}", article_metadata);
 
         // parse md
         let mut md_options = Options::empty();
@@ -82,14 +78,19 @@ impl Bob {
 
         push_html(&mut html, md_parser);
 
-        println!("{}", html);
+        std::fs::write("blog/shit.html", html).unwrap();
+
+        // do SQL query
     }
 }
 
 #[derive(Debug, Deserialize)]
 
 struct ArticleMetadata {
-    title:    String,
+    title: String,
+    #[serde(with = "date_format")]
     pub_date: Date,
-    tags:     Vec<String>,
+    tags: Vec<String>,
 }
+
+time::serde::format_description!(date_format, Date, "[year]-[month]-[day]");
