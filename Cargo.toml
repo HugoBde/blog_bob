@@ -6,6 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+configparser = "3.0.2"
 inotify = "0.10.1"
 pulldown-cmark = "0.9.3"
 serde = { version = "1.0.167", features = ["derive"] }
