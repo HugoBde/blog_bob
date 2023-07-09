@@ -12,11 +12,6 @@ I am a huge fan of Bob the Builder, and attribute my "can-do" attitude and love 
 
 ![Bob the Builder](https://upload.wikimedia.org/wikipedia/en/thumb/c/c5/Bob_the_builder.jpg/220px-Bob_the_builder.jpg)
 
-## Build Dependencies
-- libboost
-- libcmark-gfm
-- libpqxx
-
 ## Todo
 - [ ] update database if monitored folder content has changed on startup
 - [ ] queue request to database if not available
@@ -24,3 +19,4 @@ I am a huge fan of Bob the Builder, and attribute my "can-do" attitude and love 
 
 ## Lessons learnt
 Rust is so much better, I miss Result and Option
+Update 10-07-2023: I rewrote this in Rust and it's so much better
