@@ -16,7 +16,5 @@ jobs:
 # I don't want to figure out how to make configure install libraries for me
 #     - name: configure
 #       run: ./configure
-    - name: configure
-      run: sudo apt-get install -y libpqxx-dev libboost-program-options1.74-dev libcmark-gfm-dev
-    - name: make
-      run: make -j
+    - name: build
+      run: cargo build
