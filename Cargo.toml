@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 configparser = "3.0.2"
 inotify = "0.10.1"
+postgres = { version = "0.19.5", features = ["with-time-0_3"] }
 pulldown-cmark = "0.9.3"
 serde = { version = "1.0.167", features = ["derive"] }
 serde_yaml = "0.9.22"
