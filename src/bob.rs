@@ -156,7 +156,7 @@ impl Bob {
             "INSERT INTO blog_articles VALUES(DEFAULT, $1, $2, $3 , CURRENT_DATE, $4);",
             &[
                 &article_metadata.title,
-                &output_file_name.to_str(),
+                &output_file_name.file_name().unwrap().to_str(),
                 &article_metadata.pub_date,
                 &article_metadata.tags,
             ],
